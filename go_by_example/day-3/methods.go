@@ -6,6 +6,7 @@ type rect struct {
 	width, height int
 }
 
+// 最好是指针，不然就是传递结构体的副本，改变值容易出错
 func (r *rect) area() int {
 	return r.height * r.width
 }

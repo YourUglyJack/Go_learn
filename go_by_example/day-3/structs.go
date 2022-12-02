@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
+// 结构体中，小写是私有属性，大写是public
 type person struct {
 	name string
 	age  int
