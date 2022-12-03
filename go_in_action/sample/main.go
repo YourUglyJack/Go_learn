@@ -1,6 +1,7 @@
 package sample
 
 import (
+	_ "./search"
 	"log"
 	"os"
 )

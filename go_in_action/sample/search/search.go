@@ -14,7 +14,7 @@ import (
 // 注册用于搜索的匹配器映射，包级变量
 var matchers = make(map[string]Matcher)
 
-// Run执行搜索逻辑
+// Run 执行搜索逻辑
 func Run(searchTerm string) {
 
 	// 获取需要搜索的数据源列表
@@ -36,9 +36,9 @@ func Run(searchTerm string) {
 	// 为每个数据源启动一个goroutine来查找结果
 	for _, feed := range feeds {
 		// 获取匹配器
-		matcher, exists := matchers[feed.TYPE]
+		matcher, exists := matchers[feed.Type]
 		if !exists {
-			matcher = matchers['default']
+			matcher = matchers["default"]
 		}
 
 		// 启动一个goroutine来搜索
@@ -53,7 +53,7 @@ func Run(searchTerm string) {
 		// 等候所有任务完成
 		waitGroup.Wait()
 
-		// 用关闭通道的方式，通知Display函数
+		// 用关闭通道的方式，通知Display函数可以退出函数
 		close(results)
 	}()
 
