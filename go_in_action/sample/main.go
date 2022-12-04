@@ -1,7 +1,8 @@
-package sample
+package main
 
 import (
-	_ "./search"
+	_ "./matchers"
+	"./search"
 	"log"
 	"os"
 )
@@ -13,4 +14,9 @@ import (
 func init() {
 	// 将日志输出到标准输出
 	log.SetOutput(os.Stdout)
+}
+
+func main() {
+	// 使用特定项做搜索
+	search.Run("foxnews")
 }
