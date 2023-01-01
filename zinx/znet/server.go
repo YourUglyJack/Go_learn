@@ -38,7 +38,7 @@ func (s *Server) Start() {
 			fmt.Println("Listen", s.IPVersion, "err", err)
 		}
 
-		fmt.Println("start zinx server", s.Name, " succ, now start to listen...")
+		fmt.Println("Start zinx server", s.Name, " succ, now start to listen...")
 
 		// 3启动server网络链接业务
 		for {
@@ -59,6 +59,8 @@ func (s *Server) Start() {
 					if err != nil {
 						fmt.Println("Receive buff err", err)
 					}
+					fmt.Printf("server recv info: %s, cnt: %d", buf, cnt)
+
 					// echo
 					if _, err := conn.Write(buf[:cnt]); err != nil {
 						fmt.Println("Write buff err", err)
