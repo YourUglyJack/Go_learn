@@ -10,7 +10,7 @@ const COUNT = 10
 
 func main() {
 
-	fmt.Printf("Start client ...")
+	fmt.Println("Start client ...")
 
 	// 1.链接服务器
 	conn, err := net.Dial("tcp", "127.0.0.1:8999")

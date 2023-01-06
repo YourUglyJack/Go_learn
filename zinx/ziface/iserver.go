@@ -1,7 +1,6 @@
 package ziface
 
-// 抽象接口
-
+// IServer 抽象接口
 type IServer interface {
 	// Start 启动服务器
 	Start()

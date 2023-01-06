@@ -2,6 +2,7 @@ package znet
 
 import (
 	"../ziface"
+	"errors"
 	"fmt"
 	"net"
 	"time"
@@ -16,6 +17,17 @@ type Server struct {
 	IP string
 	// 服务器所监听的端口
 	Port int
+}
+
+// ============定义当前客户端连接的handle api=====================
+func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
+	// echo
+	fmt.Println("[Conn Handle] CallBankToClient ...")
+	if _, err := conn.Write(data[:cnt]); err != nil {
+		fmt.Println("write back buff err", err)
+		return errors.New("CallBackToClient error")
+	}
+	return nil
 }
 
 // 实现ziface.IServer的全部接口方法
@@ -40,7 +52,10 @@ func (s *Server) Start() {
 
 		fmt.Println("Start zinx server", s.Name, " succ, now start to listen...")
 
-		// 3启动server网络链接业务
+		// 3 启动server网络链接业务
+		var cid uint32
+		cid = 0
+
 		for {
 			conn, err := listenner.AcceptTCP()
 			if err != nil {
@@ -49,24 +64,11 @@ func (s *Server) Start() {
 			}
 			// todo 设置服务器最大链接控制，超过最大链接就关闭
 			// todo 处理新链接请求的业务方法，此时handler和conn是绑定的
+			dealConn := NewConnetion(conn, cid, CallBackToClient)
+			cid++
 
-			// 初版暂定echo业务
-			go func() {
-				// 等待客户端发送数据
-				for {
-					buf := make([]byte, 512)
-					cnt, err := conn.Read(buf)
-					if err != nil {
-						fmt.Println("Receive buff err", err)
-					}
-					fmt.Printf("server recv info: %s, cnt: %d", buf, cnt)
+			go dealConn.Start()
 
-					// echo
-					if _, err := conn.Write(buf[:cnt]); err != nil {
-						fmt.Println("Write buff err", err)
-					}
-				}
-			}()
 		}
 	}()
 }
