@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// Server IServer 接口的实现，定义一个Server服务器类
 type Server struct {
 	// 服务器的名称
 	Name string
@@ -17,6 +18,20 @@ type Server struct {
 	IP string
 	// 服务器所监听的端口
 	Port int
+	// 当前服务器由用户绑定的回调router，也就是服务器注册的连接对应的处理业务？？？？？
+	Router ziface.IRouter
+}
+
+// NewServer 创建服务器句柄
+func NewServer(name string) ziface.IServer {
+	s := &Server{
+		Name:      name,
+		IPVersion: "tcp4",
+		IP:        "0.0.0.0",
+		Port:      7777,
+		Router:    nil,
+	}
+	return s
 }
 
 // ============定义当前客户端连接的handle api=====================
@@ -30,7 +45,7 @@ func CallBackToClient(conn *net.TCPConn, data []byte, cnt int) error {
 	return nil
 }
 
-// 实现ziface.IServer的全部接口方法
+// =================实现ziface.IServer的全部接口方法================
 
 // Start 开启网络服务
 func (s *Server) Start() {
@@ -48,8 +63,10 @@ func (s *Server) Start() {
 		listenner, err := net.ListenTCP(s.IPVersion, addr)
 		if err != nil {
 			fmt.Println("Listen", s.IPVersion, "err", err)
+			return
 		}
 
+		// 若执行这行，则说明监听的socket建立成功
 		fmt.Println("Start zinx server", s.Name, " succ, now start to listen...")
 
 		// 3 启动server网络链接业务
@@ -57,6 +74,7 @@ func (s *Server) Start() {
 		cid = 0
 
 		for {
+			// 阻塞等待客户端的连接
 			conn, err := listenner.AcceptTCP()
 			if err != nil {
 				fmt.Println("Accept err", err)
@@ -64,7 +82,7 @@ func (s *Server) Start() {
 			}
 			// todo 设置服务器最大链接控制，超过最大链接就关闭
 			// todo 处理新链接请求的业务方法，此时handler和conn是绑定的
-			dealConn := NewConnetion(conn, cid, CallBackToClient)
+			dealConn := NewConnection(conn, cid, s.Router)
 			cid++
 
 			go dealConn.Start()
@@ -89,13 +107,6 @@ func (s *Server) Server() {
 	}
 }
 
-// NewServer 创建服务器句柄
-func NewServer(name string) ziface.IServer {
-	s := &Server{
-		Name:      name,
-		IPVersion: "tcp4",
-		IP:        "0.0.0.0",
-		Port:      8999,
-	}
-	return s
+func (s *Server) AddRouter(router ziface.IRouter) {
+	s.Router = router
 }

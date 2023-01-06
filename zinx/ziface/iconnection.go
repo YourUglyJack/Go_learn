@@ -14,11 +14,11 @@ type IConnection interface {
 	// GetTCPConnection 从连接获取socket
 	GetTCPConnection() *net.TCPConn
 
-	// GetConnId 获取连接的ID
-	GetConnId() uint32
+	// GetConnID 获取连接的ID
+	GetConnID() uint32
 
-	// GetRemoveAddr 获取客户端地址
-	GetRemoveAddr() net.TCPAddr
+	// GetRemoteAddr 获取客户端地址
+	GetRemoteAddr() net.Addr
 }
 
 // HandleFunc 定义一个统一处理连接业务的接口，第一个参数是原生socket 第二个参数是客户端请求的数据 第三个参数是客户端请求数据的长度
