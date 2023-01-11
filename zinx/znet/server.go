@@ -1,6 +1,7 @@
 package znet
 
 import (
+	"../utils"
 	"../ziface"
 	"errors"
 	"fmt"
@@ -23,12 +24,15 @@ type Server struct {
 }
 
 // NewServer 创建服务器句柄
-func NewServer(name string) ziface.IServer {
+func NewServer() ziface.IServer {
+	// 初始化全局配置文件
+	utils.GlobalObject.Reload()
+
 	s := &Server{
-		Name:      name,
+		Name:      utils.GlobalObject.Name,
 		IPVersion: "tcp4",
-		IP:        "0.0.0.0",
-		Port:      7777,
+		IP:        utils.GlobalObject.Host,
+		Port:      utils.GlobalObject.TcpPort,
 		Router:    nil,
 	}
 	return s
